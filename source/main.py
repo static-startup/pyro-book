@@ -16,17 +16,25 @@ def register(driver, email, name, password):
     driver.find_element(By.ID, "password").send_keys(password)
     driver.find_element(By.XPATH, "//*[@id=\"registrationForm\"]/button").click()
 
-def confirm(driver):
+def confirm(driver, browser):
     while True:
         driver.get("https://www.minuteinbox.com/email/id/2")
         try:
-            driver.get(driver.find_element(By.XPATH,
-                    "/html/body/div/div/div/center/div/center/table/tbody/tr[2]/td/p/a[1]").get_attribute("href"))
+            if browser == "tor":
+                driver.get(driver.find_element(By.XPATH,
+                        "/html/body/div/div/div/center/div/center/table/tbody/tr[2]/td/p/a[2]").get_attribute("href"))
+            else:
+                driver.get(driver.find_element(By.XPATH,
+                        "/html/body/div/div/div/center/div/center/table/tbody/tr[2]/td/p/a[1]").get_attribute("href"))
             break
         except: pass
 
-def login(driver, email, password):
-    driver.get("https://singlelogin.org/")
+def login(driver, email, password, browser):
+    if browser == "tor":
+        driver.get("http://loginlibhuwhnmis.onion/")
+    else:
+        driver.get("https://singlelogin.org/")
+
     driver.find_element(By.ID, "username").send_keys(email)
     driver.find_element(By.ID, "password").send_keys(password)
 
@@ -84,6 +92,8 @@ def check_tor(driver):
         driver.close()
         print("FATAL: NOT CONNECTED TO TOR")
         exit()
+    
+    print("you are connected to tor")
 
 browser = get_browser()
 
@@ -124,11 +134,11 @@ register(driver, email, name, password)
 
 print("registration successful")
 
-confirm(driver)
+confirm(driver, browser)
 
 print("account confirmed")
 
-login(driver, email, password)
+login(driver, email, password, browser)
 
 print("logined in")
 
